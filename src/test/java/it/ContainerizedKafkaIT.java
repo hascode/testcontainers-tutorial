@@ -1,15 +1,12 @@
 package it;
 
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -55,7 +52,9 @@ public class ContainerizedKafkaIT {
       while (true) {
         ConsumerRecords<String, String> records = kafkaConsumer.poll(20);
         records.forEach(record -> {
-          System.out.printf("%d # offset: %d, value = %s%n", counter.incrementAndGet(), record.offset(), record.value());
+          System.out
+              .printf("%d # offset: %d, value = %s%n", counter.incrementAndGet(), record.offset(),
+                  record.value());
         });
       }
 
@@ -63,7 +62,7 @@ public class ContainerizedKafkaIT {
 
     try (
         Producer<String, String> producer = new KafkaProducer<>(props)) {
-      IntStream.range(0,100).forEach(i -> {
+      IntStream.range(0, 100).forEach(i -> {
         final String msg = String.format("my-message-%d", i);
         producer.send(new ProducerRecord<>("my-topic", msg));
         System.out.println("Sent:" + msg);
