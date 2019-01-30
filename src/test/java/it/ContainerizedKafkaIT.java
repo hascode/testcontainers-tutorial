@@ -49,8 +49,8 @@ public class ContainerizedKafkaIT {
     new Thread(() -> {
       KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props);
       kafkaConsumer.subscribe(Arrays.asList("my-topic"));
-      while (true) {
-        ConsumerRecords<String, String> records = kafkaConsumer.poll(20);
+      while (counter.get()<=100) {
+        ConsumerRecords<String, String> records = kafkaConsumer.poll(200);
         records.forEach(record -> {
           System.out
               .printf("%d # offset: %d, value = %s%n", counter.incrementAndGet(), record.offset(),
