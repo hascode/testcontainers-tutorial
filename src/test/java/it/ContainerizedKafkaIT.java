@@ -25,18 +25,18 @@ public class ContainerizedKafkaIT {
   public KafkaContainer kafkaContainer = new KafkaContainer();
 
   @Test
-  @DisplayName("kafka it should be running")
+  @DisplayName("kafka server should be running")
   void shouldBeRunningKafka() throws Exception {
     assertTrue(kafkaContainer.isRunning());
   }
 
   @Test
-  @DisplayName("should send records over kafka container")
+  @DisplayName("should send and receive records over kafka")
   void shouldSendAndReceiveMessages() throws Exception {
-    String servers = kafkaContainer.getBootstrapServers();
+    var servers = kafkaContainer.getBootstrapServers();
     System.out.printf("servers: %s%n", servers);
 
-    Properties props = new Properties();
+    var props = new Properties();
     props.put("bootstrap.servers", servers);
     props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -44,7 +44,7 @@ public class ContainerizedKafkaIT {
     props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("group.id", "group-1");
 
-    final AtomicInteger counter = new AtomicInteger(0);
+    var counter = new AtomicInteger(0);
 
     new Thread(() -> {
       KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props);
@@ -63,7 +63,7 @@ public class ContainerizedKafkaIT {
     try (
         Producer<String, String> producer = new KafkaProducer<>(props)) {
       IntStream.range(0, 100).forEach(i -> {
-        final String msg = String.format("my-message-%d", i);
+        var msg = String.format("my-message-%d", i);
         producer.send(new ProducerRecord<>("my-topic", msg));
         System.out.println("Sent:" + msg);
       });
